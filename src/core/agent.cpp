@@ -23,14 +23,11 @@ void Agent::update_root(Point move) {
 			this->root->setParent(nullptr);
 			this->visit(this->root);
 			this->board.display_board(this->curr_node->getMove());
-			printf("\033[1;32mMove:\033[0m (%d, %d)\n", move.first,
-			       move.second);
-			printf("\033[1;35mScore:\033[0m %d\n", child->getValue());
+			printf("Score: %d, Move: [%d, %c]\n", child->getValue(),
+			       15 - move.first, 'A' + move.second);
 			if (~this->board.getNowPlaying() == this->board.getAIColor()) {
-				printf(
-				    "\033[1;36mSearch time:\033[0m %.2lf "
-				    "\033[1;36msec\033[0m\n",
-				    (this->end_time - this->start_time) / CLOCKS_PER_SEC);
+				printf("Search time: %.2lf sec\n",
+				       (this->end_time - this->start_time) / CLOCKS_PER_SEC);
 			}
 			return;
 		}
@@ -42,7 +39,8 @@ void Agent::update_root(Point move) {
 	this->root->setParent(nullptr);
 	this->visit(this->root);
 	this->board.display_board(this->curr_node->getMove());
-	printf("\033[1;32mMove:\033[0m (%d, %d)\n", move.first, move.second);
+	printf("Score: %d, Move: [%d, %c]\n", 0, 15 - move.first,
+	       'A' + move.second);
 }
 
 void Agent::visit(Node* node) {
@@ -149,7 +147,7 @@ void Agent::search(Point move) {
 
 	this->start_time = clock();
 	for (int s = 0; s < this->max_searches; s++) {
-		printf("\033[36mSearching: %.0lf%\033[0m\r",
+		printf("Searching: %.0lf%\r",
 		       round((double)s * 100 / this->max_searches));
 		while (this->curr_node->getChildren().size() != 0 &&
 		       !this->board.is_ended())
@@ -178,17 +176,18 @@ void Agent::search(Point move) {
 }
 
 void Agent::game_start() {
-	int player_color;
+	char player_color;
 	while (true) {
-		printf("\033[33mPlease choose black(1) or white(0) ? \033[0m");
-		scanf("%d", &player_color);
-		if (player_color == 0 || player_color == 1)
+		printf("Please choose black(b) or white(w) ? ");
+		scanf("%c", &player_color);
+		if (player_color == 'w' || player_color == 'W' || player_color == 'b' ||
+		    player_color == 'B')
 			break;
 		else
-			printf("\033[1;31mInvalid input! Please try again!\033[0m\n");
+			printf("Invalid input! Please try again!\n");
 	}
 
-	if (player_color == 0) {
+	if (player_color == 'w' || player_color == 'W') {
 		this->board.setAIColor(Color::BLACK);
 		int center = round((this->board.getBoardSize() - 1) * 0.5);
 		this->update_root(make_pair(center, center));
@@ -199,18 +198,23 @@ void Agent::game_start() {
 
 	while (!this->board.is_ended()) {
 		int i, j;
-		printf("\033[33mEnter move (row, col): \033[0m");
-		scanf("%d %d", &i, &j);
+		char c;
+		printf("Enter move [row, col]: ");
+		scanf("%d %c", &i, &c);
+		i = 15 - i;
+		j = c - 'A';
 		while (!this->board.is_legal(make_pair(i, j))) {
-			printf("\033[1;31mInvalid move! Please try again.\033[0m\n");
-			printf("\033[33mEnter move (row, col): \033[0m");
-			scanf("%d %d", &i, &j);
+			printf("Invalid move! Please try again.\n");
+			printf("Enter move [row, col]: ");
+			scanf("%d %c", &i, &c);
+			i = 15 - i;
+			j = c - 'A';
 		}
 		this->search(make_pair(i, j));
 	}
 
 	if (this->board.getWinner() == Color::BLACK)
-		printf("\033[1;31mBlack wins!\033[0m\n");
+		printf("Black wins!\n");
 	else
-		printf("\033[1;31mWhite wins!\033[0m\n");
+		printf("White wins!\n");
 }

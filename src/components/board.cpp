@@ -36,9 +36,8 @@ void Board::play_stone(Point move) {
 }
 
 void Board::display_board(Point move) {
-	printf("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4\n");
 	for (int i = 0; i < this->size; i++) {
-		printf("%2d ", i);
+		printf("%2d ", 15 - i);
 		for (int j = 0; j < this->size; j++) {
 			if (j != 0) printf("─");
 
@@ -65,7 +64,7 @@ void Board::display_board(Point move) {
 				continue;
 			}
 			if (i == 0 && j == 14) {
-				printf("┐ %-2d", i);
+				printf("┐");
 				continue;
 			}
 			if (i == 14 && j == 0) {
@@ -73,7 +72,7 @@ void Board::display_board(Point move) {
 				continue;
 			}
 			if (i == 14 && j == 14) {
-				printf("┘ %-2d", i);
+				printf("┘");
 				continue;
 			}
 			if (i == 0) {
@@ -89,14 +88,14 @@ void Board::display_board(Point move) {
 				continue;
 			}
 			if (j == 14) {
-				printf("┤ %-2d", i);
+				printf("┤");
 				continue;
 			}
 			printf("┼");
 		}
 		printf("\n");
 	}
-	printf("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4\n");
+	printf("   A B C D E F G H I J K L M N O\n");
 }
 
 vector<short> Board::adj_empty() {
