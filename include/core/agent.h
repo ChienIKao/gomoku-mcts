@@ -10,6 +10,8 @@ class Agent {
 		Node *curr_node;
 		int max_searches;
 		Board board;
+		double start_time;
+		double end_time;
 
 	public:
 		Agent();

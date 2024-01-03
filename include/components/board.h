@@ -13,6 +13,7 @@ class Board {
 		std::vector<Point> moves;
 		Color now_playing;
 		Color winner;
+		Color AI_color;
 
 	public:
 		Board();
@@ -40,5 +41,10 @@ class Board {
 
 		void setBoardSize(int n);
 		int getBoardSize();
+
+		Color getNowPlaying();
+
+		Color getAIColor();
+		void setAIColor(Color color);
 };
 #endif

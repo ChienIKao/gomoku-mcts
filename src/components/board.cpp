@@ -189,3 +189,8 @@ void Board::set_now_playing(Color color) { this->now_playing = color; }
 
 void Board::setBoardSize(int n) { this->size = n; }
 int Board::getBoardSize() { return this->size; }
+
+Color Board::getNowPlaying() { return this->now_playing; }
+
+void Board::setAIColor(Color color) { this->AI_color = color; }
+Color Board::getAIColor() { return this->AI_color; }
