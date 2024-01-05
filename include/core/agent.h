@@ -12,6 +12,11 @@ class Agent {
 		Board board;
 		double start_time;
 		double end_time;
+		int win_reward;
+		int lose_reward;
+		int tie_reward;
+		char show_history;
+		void printConf();
 
 	public:
 		Agent();

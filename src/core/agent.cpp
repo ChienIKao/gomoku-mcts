@@ -9,7 +9,12 @@
 
 using namespace std;
 
-Agent::Agent() : max_searches(10000) {
+Agent::Agent()
+    : max_searches(10000),
+      win_reward(1),
+      lose_reward(-1),
+      tie_reward(0),
+      show_history('y') {
 	root = new Node();
 	curr_node = new Node();
 	Board board = Board();
@@ -22,7 +27,10 @@ void Agent::update_root(Point move) {
 			this->root = child;
 			this->root->setParent(nullptr);
 			this->visit(this->root);
-			this->board.display_board(this->curr_node->getMove());
+			this->board.display_board(this->curr_node->getMove(),
+			                          this->show_history, this->max_searches,
+			                          this->win_reward, this->lose_reward,
+			                          this->tie_reward);
 			printf("Score: %d, Move: [%d, %c]\n", child->getValue(),
 			       15 - move.first, 'A' + move.second);
 			if (~this->board.getNowPlaying() == this->board.getAIColor()) {
@@ -38,7 +46,9 @@ void Agent::update_root(Point move) {
 	this->root = node;
 	this->root->setParent(nullptr);
 	this->visit(this->root);
-	this->board.display_board(this->curr_node->getMove());
+	this->board.display_board(this->curr_node->getMove(), this->show_history,
+	                          this->max_searches, this->win_reward,
+	                          this->lose_reward, this->tie_reward);
 	printf("Score: %d, Move: [%d, %c]\n", 0, 15 - move.first,
 	       'A' + move.second);
 }
@@ -50,7 +60,8 @@ void Agent::visit(Node* node) {
 }
 
 double UCB(int value, int visits, int total_visits) {
-	return ((double)value / visits) + sqrt(2 * log(total_visits) / visits);
+	return ((double)value / (double)visits) +
+	       sqrt(2 * log(total_visits) / visits);
 }
 
 Node* Agent::chosen_child() {
@@ -121,12 +132,13 @@ int Agent::roll_out() {
 		this->board.play_stone(move);
 	}
 
-	if (this->board.getWinner() == this->curr_node->getColor())
-		return 1;
-	else if (this->board.getWinner() == ~this->curr_node->getColor())
-		return -1;
+	// if (this->board.getWinner() == this->curr_node->getColor())
+	if (this->board.getWinner() == this->board.getAIColor())
+		return this->win_reward;
+	else if (this->board.getWinner() == ~this->board.getAIColor())
+		return this->lose_reward;
 	else
-		return 0;
+		return this->tie_reward;
 }
 
 void Agent::back_propagate(int reward) {
@@ -175,11 +187,49 @@ void Agent::search(Point move) {
 	this->update_root(best_move);
 }
 
+void Agent::printConf() {
+	printf("\nConfiguration\n");
+	printf("- Max search: %d\n", this->max_searches);
+	printf("- Win reward: %d\n", this->win_reward);
+	printf("- Lose reward: %d\n", this->lose_reward);
+	printf("- Tie reward: %d\n", this->tie_reward);
+	printf("- Show history: %c\n\n", this->show_history);
+}
+
 void Agent::game_start() {
+	printConf();
+
+	char setConf;
+	printf("Do you want to set configuration (y/n) ? ");
+	setConf = getchar();
+
+	if (setConf == 'y' || setConf == 'Y') {
+		printf("Set max search: ");
+		scanf("%d", &this->max_searches);
+
+		printf("Set win reward: ");
+		scanf("%d", &this->win_reward);
+
+		printf("Set lose reward: ");
+		scanf("%d", &this->lose_reward);
+
+		printf("Set tie reward: ");
+		scanf("%d", &this->tie_reward);
+
+		printf("Show history (y/n) ? ");
+		getchar();
+		this->show_history = getchar();
+	}
+
+	system("cls");
+	printConf();
+
 	char player_color;
 	while (true) {
+		getchar();
 		printf("Please choose black(b) or white(w) ? ");
 		scanf("%c", &player_color);
+		getchar();
 		if (player_color == 'w' || player_color == 'W' || player_color == 'b' ||
 		    player_color == 'B')
 			break;
@@ -193,7 +243,9 @@ void Agent::game_start() {
 		this->update_root(make_pair(center, center));
 	} else {
 		this->board.setAIColor(Color::WHITE);
-		this->board.display_board(this->curr_node->getMove());
+		this->board.display_board(
+		    this->curr_node->getMove(), this->show_history, this->max_searches,
+		    this->win_reward, this->lose_reward, this->tie_reward);
 	}
 
 	while (!this->board.is_ended()) {

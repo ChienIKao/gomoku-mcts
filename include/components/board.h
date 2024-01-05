@@ -1,7 +1,7 @@
 #ifndef BOARD
 #define BOARD
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 #include "components/constants.h"
 
@@ -22,7 +22,8 @@ class Board {
 
 		void play_stone(Point move);
 
-		void display_board(Point move);
+		void display_board(Point move, char show_history, int max_searches,
+		                   int win_reward, int lose_reward, int tie_reward);
 
 		std::vector<short> adj_empty();
 

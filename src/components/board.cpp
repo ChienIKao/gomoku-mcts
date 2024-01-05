@@ -35,7 +35,10 @@ void Board::play_stone(Point move) {
 	}
 }
 
-void Board::display_board(Point move) {
+void Board::display_board(Point move, char show_history, int max_searches,
+                          int win_reward, int lose_reward, int tie_reward) {
+	if (show_history == 'n' || show_history == 'N') system("cls");
+
 	for (int i = 0; i < this->size; i++) {
 		printf("%2d ", 15 - i);
 		for (int j = 0; j < this->size; j++) {
@@ -88,7 +91,19 @@ void Board::display_board(Point move) {
 				continue;
 			}
 			if (j == 14) {
-				printf("┤");
+				if (i == 3) printf("┤\tConfiguration:");
+				else if (i == 4) printf("┤\t- Max search: %d", max_searches);
+				else if (i == 5) printf("┤\t- Win reward: %d", win_reward);
+				else if (i == 6) printf("┤\t- Lose reward: %d", lose_reward);
+				else if (i == 7) printf("┤\t- Tie reward: %d", tie_reward);
+				else if (i == 9)
+					printf("┤\t◯ : %s",
+					       AI_color == Color::BLACK ? "AI" : "YOU");
+				else if (i == 11)
+					printf("┤\t⬤ : %s",
+					       AI_color == Color::WHITE ? "AI" : "YOU");
+				else
+					printf("┤");
 				continue;
 			}
 			printf("┼");
